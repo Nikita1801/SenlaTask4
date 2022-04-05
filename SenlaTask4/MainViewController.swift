@@ -8,21 +8,20 @@
 import Foundation
 import UIKit
 
-protocol MainVCDelegate {
+protocol MainVCDelegate : AnyObject{
+    func changeRules(mode : Bool)
     var rulesWithoutRepeat : Bool {get set}
 }
 
-class MainViewController : UIViewController {
+class MainViewController : UIViewController, MainVCDelegate {
+
     
-    var rulesWithoutRepeat = false
+    var rulesWithoutRepeat : Bool = false
     var settingsVC = SettingsViewController()
     var stackView = UIStackView()
     var titleLabel = UILabel()
     let options = ["Камень", "Ножницы", "Бумага"]
     var randomItem : String = ""
-    
-    
-    var mainVCDelegate : MainVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,10 +33,13 @@ class MainViewController : UIViewController {
         stackView.spacing = 50
         
         
-        
         configureTitleLabel()
         configureItem()
         configureButtons()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+       // print(rulesWithoutRepeat)
     }
     
     func configureButtons() {
@@ -122,7 +124,7 @@ class MainViewController : UIViewController {
     }
     @objc func didTapButton(_ sender : UIBarButtonItem!) {
         let settingsVC = SettingsViewController()
-        
+        settingsVC.delegate = self
         navigationController?.pushViewController(settingsVC, animated: false)
     }
     
@@ -145,7 +147,7 @@ class MainViewController : UIViewController {
     }
 
 extension MainVCDelegate {
-    mutating func changeRules(rulesWithoutRepeatMode : Bool) {
-        rulesWithoutRepeat = rulesWithoutRepeatMode
+    func changeRules(mode: Bool) {
+        rulesWithoutRepeat = mode
     }
 }

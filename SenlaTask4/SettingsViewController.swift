@@ -26,16 +26,12 @@ class SettingsViewController : ViewController {
         view.addSubview(stackView)
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
-        stackView.spacing = 10
         
         configureSwitches()
         
     }
     override func viewWillDisappear(_ animated: Bool) {
-        if (switchRules.isOn) {
-            rulesWithoutRepeat = UserDefaults.standard.bool(forKey: "switchState")
-            print(rulesWithoutRepeat)
-        }
+        print(delegate?.rulesWithoutRepeat)
     }
     
     func configureSwitches() {
@@ -51,8 +47,14 @@ class SettingsViewController : ViewController {
         
         switchRules = UISwitch(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         switchRules.center = view.center
-        switchRules.addTarget(self, action: #selector(switchRulesDidTaped(_:)), for: .valueChanged)
         stackView.addArrangedSubview(switchRules)
+        if let delegate = delegate {
+            switchRules.setOn(delegate.rulesWithoutRepeat, animated: true)
+        }
+        else {
+            switchRules.setOn(false, animated: true)
+        }
+        switchRules.addTarget(self, action: #selector(switchDidTaped(_:)), for: .valueChanged)
         
         
         
@@ -93,22 +95,21 @@ class SettingsViewController : ViewController {
         }
     }
     
-    @objc func switchRulesDidTaped(_ sender : UISwitch!) {
-        if (sender.isOn) {
-            print("Without repeat")
-            rulesWithoutRepeat = true
-            UserDefaults.standard.set(sender.isOn, forKey: "switchState")
-            }
-        else {
-            print("With repeat")
-        }
-    }
+//    @objc func switchRulesDidTaped(_ sender : UISwitch!) {
+//        if (sender.isOn) {
+//            print("Without repeat")
+//            rulesWithoutRepeat = true
+//            UserDefaults.standard.set(sender.isOn, forKey: "switchState")
+//            }
+//        else {
+//            print("With repeat")
+//        }
+//    }
 }
 
 extension SettingsViewController{
     @objc func switchDidTaped(_ sender : UISwitch!) {
-        
+        delegate?.changeRules(mode: sender.isOn)
+        print(delegate?.changeRules(mode: sender.isOn))
     }
-    
-    
 }
